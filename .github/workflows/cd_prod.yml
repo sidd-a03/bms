@@ -13,7 +13,7 @@ jobs:
         run: |
           # 1. Setup the ssh key and directory
           mkdir -p ~/.ssh
-          # Use > instead of &> to avoid shell junk in your key
+          
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
 
@@ -22,7 +22,6 @@ jobs:
 
           # 3. SSH into the server and run commands using a Heredoc (<< 'EOF')
           ssh -i ~/.ssh/id_rsa ubuntu@13.63.175.166 << 'EOF'
-            set -e # Exit immediately if a command fails
             
             # 4. Navigate to the project directory
             cd projects/bms && git pull origin main
