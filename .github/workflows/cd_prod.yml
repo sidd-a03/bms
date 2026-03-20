@@ -9,31 +9,25 @@ jobs:
     runs-on: ubuntu-latest
     name: Deploying the frontend to prod    
     steps:
-      - name: SSH and Deploy
-        run: |
-          # 1. Setup the ssh key and directory
-          mkdir -p ~/.ssh
-          
-          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-
-          # 2. Add the server to known hosts
-          ssh-keyscan -H 13.63.175.166 >> ~/.ssh/known_hosts
-
-          # 3. SSH into the server and run commands using a Heredoc
-          ssh -i ~/.ssh/id_rsa ubuntu@13.63.175.166 << 'EOF'
-            # 4. Navigate to the project directory
-            cd projects/bms && git pull origin main
-
-            # Load Node/NVM if needed (common on Ubuntu servers)
-            [ -s "$HOME/.nvm/nvm.sh" ] && \. "$HOME/.nvm/nvm.sh"
-
-            # 5. Install dependencies
+      - name: Deploy via SSH Action
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: 13.63.175.166
+          username: ubuntu
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          # The script below runs directly on your server
+          script: |
+            # 1. Load NVM so Node/pnpm work
+            export NVM_DIR="$HOME/.nvm"
+            [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+            
+            # 2. Navigate and Pull code
+            cd ~/projects/bms
+            git pull origin main
+            
+            # 3. Install and Build
             pnpm install
-
-            # 6. Build the project
             pnpm build
-
-            # 7. Restart the server
+            
+            # 4. Restart the server
             pm2 restart all
-          EOF
