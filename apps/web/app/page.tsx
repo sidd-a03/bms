@@ -5,6 +5,8 @@ const Page = async () => {
   return (
     <>
       {user?.username}
+      <br />
+      {user?.password}
     </>
   )
 }
