@@ -20,9 +20,8 @@ jobs:
           # 2. Add the server to known hosts
           ssh-keyscan -H 13.63.175.166 >> ~/.ssh/known_hosts
 
-          # 3. SSH into the server and run commands using a Heredoc (<< 'EOF')
+          # 3. SSH into the server and run commands using a Heredoc
           ssh -i ~/.ssh/id_rsa ubuntu@13.63.175.166 << 'EOF'
-            
             # 4. Navigate to the project directory
             cd projects/bms && git pull origin main
 
