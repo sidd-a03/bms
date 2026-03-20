@@ -37,5 +37,5 @@ jobs:
             pnpm build
 
             # 7. Restart the server
-            pm2 restart all
+            pm2 reload all
           EOF
